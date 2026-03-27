@@ -27,22 +27,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.delay
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.Arrangement
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun StorageSection(
     title: String,
-    items: List<String>
+    items: List<String>,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 10.dp)
+        modifier = modifier
+            .padding(horizontal = 10.dp, vertical = 10.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.secondaryContainer)
     ) {
@@ -81,13 +85,19 @@ class HomeScreen {
 
 
                 // 콘텐츠 레이어
-                Column(modifier = Modifier.fillMaxWidth().padding(top = 20.dp)) {
+                Column(modifier = Modifier.fillMaxWidth().padding(5.dp)) {
 
-                    Box(modifier = Modifier.fillMaxWidth().height(150.dp)
-                        .padding(horizontal = 20.dp, vertical = 10.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(MaterialTheme.colorScheme.onPrimary)) {
-
+                    //냉장고 요정
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(150.dp)
+                            .padding(horizontal = 10.dp, vertical = 10.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.onPrimary),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
                         val fullText = "냉장고 재료를 추가해보세요~!"
                         var displayedText by remember { mutableStateOf("") }
                         LaunchedEffect(Unit) {
@@ -99,23 +109,36 @@ class HomeScreen {
                         Text(
                             text = displayedText,
                             style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(end = 120.dp).align(Alignment.CenterEnd)
+                            modifier = Modifier.weight(1f).padding(start = 20.dp)
                         )
                         Image(
                             painter = painterResource(id = R.drawable.fridge_happy),
                             contentDescription = null,
                             modifier = Modifier
-                                .size(110.dp).align(Alignment.CenterEnd).padding(end = 10.dp)
+                                .size(110.dp)
+                                .padding(end = 10.dp)
                         )
                     }
 
                     val items1 = listOf("다진마늘", "양파", "삼겹살", "식빵", "닭가슴살")
                     val items2 = listOf("김치", "봄동", "고춧가루", "고구마", "감자", "계란", "양배추", "로제 소스", "까르보나라 소스")
                     val items3 = listOf("라면", "참치", "스팸")
+                    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-                    StorageSection(title = "냉동", items = items1)
-                    StorageSection(title = "냉장", items = items2)
-                    StorageSection(title = "실온", items = items3)
+                    if (isLandscape) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            StorageSection(title = "냉동", items = items1, modifier = Modifier.weight(1f).fillMaxHeight())
+                            StorageSection(title = "냉장", items = items2, modifier = Modifier.weight(1f).fillMaxHeight())
+                            StorageSection(title = "실온", items = items3, modifier = Modifier.weight(1f).fillMaxHeight())
+                        }
+                    } else {
+                        StorageSection(title = "냉동", items = items1, modifier = Modifier.fillMaxWidth())
+                        StorageSection(title = "냉장", items = items2, modifier = Modifier.fillMaxWidth())
+                        StorageSection(title = "실온", items = items3, modifier = Modifier.fillMaxWidth())
+                    }
                 }
             }
         }
