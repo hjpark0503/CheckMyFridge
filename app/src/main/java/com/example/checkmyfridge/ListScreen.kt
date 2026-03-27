@@ -1,5 +1,6 @@
 package com.example.checkmyfridge
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -97,6 +98,7 @@ class ListScreen {
             Column(
                 modifier = modifier
                     .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.onPrimary)
                     .pointerInput(Unit) {
                         detectTapGestures(onTap = { focusManager.clearFocus() })
                     }

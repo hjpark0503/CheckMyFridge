@@ -15,7 +15,7 @@ private val DarkColorScheme = darkColorScheme(
     primaryContainer = darkGrey,
     secondaryContainer = deepGrey,
     tertiary = grey,
-    background = black,
+    background = darkGrey,
     onBackground = white,
     onSurface = white,
     onPrimary = black,
@@ -26,9 +26,10 @@ private val LightColorScheme = lightColorScheme(
     primaryContainer = blue,
     secondaryContainer = lightBlue,
     tertiary = blue,
-    background = white,
+    background = blue,
     onBackground = black,
     onSurface = black,
+    onPrimary = white
 )
 
 private val WoodColorScheme = lightColorScheme(
@@ -36,9 +37,10 @@ private val WoodColorScheme = lightColorScheme(
     primaryContainer = brown,
     secondaryContainer = cream,
     tertiary = yellow,
-    background = white,
+    background = brown,
     onBackground = black,
     onSurface = black,
+    onPrimary = white,
 )
 
 @Composable

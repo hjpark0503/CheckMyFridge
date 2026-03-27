@@ -75,49 +75,40 @@ class HomeScreen {
             Box(
                 modifier = modifier
                     .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.primaryContainer)
                     .verticalScroll(rememberScrollState())
             ) {
 
-                // 배경 레이어
-                Column(modifier = Modifier.matchParentSize()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .background(MaterialTheme.colorScheme.background)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.primaryContainer)
-                    )
-                }
-
-                // 이미지
-                Box(modifier = Modifier.fillMaxWidth().height(120.dp).padding(top = 30.dp, end = 20.dp)) {
-                    val fullText = "냉장고 재료를 추가해보세요~!"
-                    var displayedText by remember { mutableStateOf("") }
-                    LaunchedEffect(Unit) {
-                        fullText.forEach { char ->
-                            displayedText += char
-                            delay(150L)
-                        }
-                    }
-                    Text(
-                        text = displayedText,
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(end = 110.dp).align(Alignment.CenterEnd)
-                    )
-                    Image(
-                        painter = painterResource(id = R.drawable.fridge_happy),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(100.dp).align(Alignment.BottomEnd)
-                    )
-                }
 
                 // 콘텐츠 레이어
-                Column(modifier = Modifier.fillMaxWidth().padding(top = 120.dp)) {
+                Column(modifier = Modifier.fillMaxWidth().padding(top = 20.dp)) {
+
+                    Box(modifier = Modifier.fillMaxWidth().height(150.dp)
+                        .padding(horizontal = 20.dp, vertical = 10.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.onPrimary)) {
+
+                        val fullText = "냉장고 재료를 추가해보세요~!"
+                        var displayedText by remember { mutableStateOf("") }
+                        LaunchedEffect(Unit) {
+                            fullText.forEach { char ->
+                                displayedText += char
+                                delay(150L)
+                            }
+                        }
+                        Text(
+                            text = displayedText,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(end = 120.dp).align(Alignment.CenterEnd)
+                        )
+                        Image(
+                            painter = painterResource(id = R.drawable.fridge_happy),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(110.dp).align(Alignment.CenterEnd).padding(end = 10.dp)
+                        )
+                    }
+
                     val items1 = listOf("다진마늘", "양파", "삼겹살", "식빵", "닭가슴살")
                     val items2 = listOf("김치", "봄동", "고춧가루", "고구마", "감자", "계란", "양배추", "로제 소스", "까르보나라 소스")
                     val items3 = listOf("라면", "참치", "스팸")
