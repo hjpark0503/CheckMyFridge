@@ -19,12 +19,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.delay
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
@@ -39,7 +44,7 @@ private fun StorageSection(
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 10.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFFE0F0FF))
+            .background(MaterialTheme.colorScheme.secondaryContainer)
     ) {
         Text(
             text = title,
@@ -79,19 +84,27 @@ class HomeScreen {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
-                            .background(Color.White)
+                            .background(MaterialTheme.colorScheme.background)
                     )
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color(0xFF98C8FF))
+                            .background(MaterialTheme.colorScheme.primaryContainer)
                     )
                 }
 
                 // 이미지
-                Box(modifier = Modifier.fillMaxWidth().height(130.dp).padding(top = 30.dp, end = 20.dp)) {
+                Box(modifier = Modifier.fillMaxWidth().height(120.dp).padding(top = 30.dp, end = 20.dp)) {
+                    val fullText = "냉장고 재료를 추가해보세요~!"
+                    var displayedText by remember { mutableStateOf("") }
+                    LaunchedEffect(Unit) {
+                        fullText.forEach { char ->
+                            displayedText += char
+                            delay(150L)
+                        }
+                    }
                     Text(
-                        text = "냉장고 재료를 추가해보세요~!",
+                        text = displayedText,
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(end = 110.dp).align(Alignment.CenterEnd)
                     )
@@ -104,7 +117,7 @@ class HomeScreen {
                 }
 
                 // 콘텐츠 레이어
-                Column(modifier = Modifier.fillMaxWidth().padding(top = 130.dp)) {
+                Column(modifier = Modifier.fillMaxWidth().padding(top = 120.dp)) {
                     val items1 = listOf("다진마늘", "양파", "삼겹살", "식빵", "닭가슴살")
                     val items2 = listOf("김치", "봄동", "고춧가루", "고구마", "감자", "계란", "양배추", "로제 소스", "까르보나라 소스")
                     val items3 = listOf("라면", "참치", "스팸")
