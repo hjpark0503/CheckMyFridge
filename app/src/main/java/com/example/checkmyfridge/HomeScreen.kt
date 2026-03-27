@@ -36,8 +36,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
+import com.example.checkmyfridge.ui.theme.black
+import com.example.checkmyfridge.ui.theme.white
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun StorageSection(
     title: String,
@@ -52,12 +53,13 @@ private fun StorageSection(
     ) {
         Text(
             text = title,
+            color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(15.dp)
         )
         FlowRow(
             modifier = Modifier.padding(horizontal = 10.dp),
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items.forEach { label ->
                 Button(
@@ -94,7 +96,7 @@ class HomeScreen {
                             .height(150.dp)
                             .padding(horizontal = 10.dp, vertical = 10.dp)
                             .clip(RoundedCornerShape(16.dp))
-                            .background(MaterialTheme.colorScheme.onPrimary),
+                            .background(white),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
@@ -108,6 +110,7 @@ class HomeScreen {
                         }
                         Text(
                             text = displayedText,
+                            color = black,
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.weight(1f).padding(start = 20.dp)
                         )

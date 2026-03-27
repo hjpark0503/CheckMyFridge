@@ -157,6 +157,7 @@ class ListScreen {
                         Text(
                             text = item.name,
                             style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 14.dp, horizontal = 8.dp)
