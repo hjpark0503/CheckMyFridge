@@ -6,7 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -53,7 +55,7 @@ fun MainScreen(modifier: Modifier = Modifier, themeIndex: Int = 1) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         bottomBar = {
-            NavigationBar {
+            NavigationBar(tonalElevation = 0.dp, modifier = Modifier.height(75.dp)) {
                 tabs.forEachIndexed { index, title ->
                     NavigationBarItem(
                         selected = selectedTabIndex == index,
