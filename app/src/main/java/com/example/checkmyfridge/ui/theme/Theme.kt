@@ -33,11 +33,11 @@ private val LightColorScheme = lightColorScheme(
 )
 
 private val WoodColorScheme = lightColorScheme(
-    primary = lightBrown,
-    primaryContainer = brown,
-    secondaryContainer = cream,
-    tertiary = yellow,
-    background = brown,
+    primary = darkBrown,
+    primaryContainer = beige,
+    secondaryContainer = ibory,
+    tertiary = beige,
+    background = beige,
     onBackground = black,
     onSurface = black,
     onPrimary = white,
