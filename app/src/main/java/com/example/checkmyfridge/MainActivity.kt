@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -25,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.checkmyfridge.ui.theme.CheckMyFridgeTheme
 
 
@@ -35,21 +35,26 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            CheckMyFridgeTheme(
-                themeIndex = themeIndex
-            ) {
-                MainScreen(themeIndex = themeIndex)
+            var themeIndex by rememberSaveable { mutableIntStateOf(1) }
+            CheckMyFridgeTheme(themeIndex = themeIndex) {
+                MainScreen(
+                    themeIndex = themeIndex,
+                    onThemeChange = { themeIndex = it }
+                )
             }
         }
     }
 }
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier, themeIndex: Int = 1) {
+fun MainScreen(
+    modifier: Modifier = Modifier,
+    themeIndex: Int = 1,
+    onThemeChange: (Int) -> Unit = {}
+) {
     val tabs = listOf("홈", "목록", "설정")
     val tabIcons = listOf(R.drawable.home, R.drawable.paper, R.drawable.settings)
     val clickIcons = listOf(R.drawable.home_dark, R.drawable.paper_dark, R.drawable.settings_dark)
-
 
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
@@ -82,9 +87,13 @@ fun MainScreen(modifier: Modifier = Modifier, themeIndex: Int = 1) {
         }
     ) { innerPadding ->
         when (selectedTabIndex) {
-            0 -> HomeScreen.Content(modifier = Modifier.padding(innerPadding).background(Color(0xFFD9EFFF)))
+            0 -> HomeScreen.Content(modifier = Modifier.padding(innerPadding))
             1 -> ListScreen.Content(modifier = Modifier.padding(innerPadding))
-            else -> SettingsScreen.Content(modifier = Modifier.padding(innerPadding))
+            else -> SettingsScreen.Content(
+                modifier = Modifier.padding(innerPadding),
+                themeIndex = themeIndex,
+                onThemeChange = onThemeChange
+            )
         }
     }
 }
@@ -92,7 +101,7 @@ fun MainScreen(modifier: Modifier = Modifier, themeIndex: Int = 1) {
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    CheckMyFridgeTheme (themeIndex = themeIndex) {
+    CheckMyFridgeTheme(themeIndex = 1) {
         MainScreen()
     }
 }

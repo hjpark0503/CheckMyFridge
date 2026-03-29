@@ -63,7 +63,7 @@ private fun StorageSection(
         Text(
             text = title,
             color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.titleMedium,
+            fontSize = 18.sp,
             modifier = Modifier.padding(15.dp)
         )
 
