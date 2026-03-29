@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -38,7 +39,9 @@ import androidx.compose.ui.unit.sp
 import com.example.checkmyfridge.db.AppDatabase
 import com.example.checkmyfridge.db.ItemEntity
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 class ListScreen {
     companion object {
@@ -65,7 +68,7 @@ class ListScreen {
                             ItemEntity(
                                 name = trimmed,
                                 addedDate = Date().time,
-                                expirationDate = Date().time,
+                                expirationDate = Date().time + 7 * 24 * 60 * 60 * 1000L,
                                 category = currentCategory
                             )
                         )
@@ -132,15 +135,41 @@ class ListScreen {
                         .fillMaxSize()
                         .padding(horizontal = 16.dp)
                 ) {
+
                     items(items) { item ->
-                        Text(
-                            text = item.name,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
+                        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 14.dp, horizontal = 8.dp)
-                        )
+                                .padding(vertical = 8.dp, horizontal = 8.dp)
+                        ) {
+                            Text(
+                                text = item.name,
+                                fontSize = 25.sp,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
+                            )
+
+                            Column(modifier = Modifier.weight(1f)){
+                                Text(
+                                    text = "추가일자 " + dateFormat.format(Date(item.addedDate)),
+                                    fontSize = 13.sp,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.align(Alignment.End)
+                                )
+
+                                Text(
+                                    text = "소비기한 " + dateFormat.format(Date(item.expirationDate)),
+                                    fontSize = 13.sp,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.align(Alignment.End)
+
+                                )
+                            }
+
+                        }
+
                         HorizontalDivider()
                     }
                 }
