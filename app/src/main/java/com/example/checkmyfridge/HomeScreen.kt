@@ -36,7 +36,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
+import com.example.checkmyfridge.db.AppDatabase
 import com.example.checkmyfridge.ui.theme.black
+import com.example.checkmyfridge.ui.theme.darkGrey
 import com.example.checkmyfridge.ui.theme.white
 
 @Composable
@@ -57,19 +61,35 @@ private fun StorageSection(
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(15.dp)
         )
-        FlowRow(
-            modifier = Modifier.padding(horizontal = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items.forEach { label ->
-                Button(
-                    onClick = {},
-                    shape = RoundedCornerShape(8.dp),
-                ) {
-                    Text(label)
+
+        if (items.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                Text(
+                    text = "재료가 없어요",
+                    color = darkGrey
+                )
+            }
+        } else {
+            FlowRow(
+                modifier = Modifier.padding(horizontal = 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items.forEach { label ->
+                    Button(
+                        onClick = {},
+                        shape = RoundedCornerShape(8.dp),
+                    ) {
+                        Text(label)
+                    }
                 }
             }
         }
+
         Spacer(modifier = Modifier.height(10.dp))
     }
 }
@@ -123,24 +143,23 @@ class HomeScreen {
                         )
                     }
 
-                    val items1 = listOf("다진마늘", "양파", "삼겹살", "식빵", "닭가슴살")
-                    val items2 = listOf("김치", "봄동", "고춧가루", "고구마", "감자", "계란", "양배추", "로제 소스", "까르보나라 소스")
-                    val items3 = listOf("라면", "참치", "스팸")
+                    val context = LocalContext.current
+                    val dao = remember { AppDatabase.getInstance(context).itemDao() }
+                    val items1 by dao.getItemsByCategory("냉동").collectAsState(initial = emptyList())
+                    val items2 by dao.getItemsByCategory("냉장").collectAsState(initial = emptyList())
+                    val items3 by dao.getItemsByCategory("실온").collectAsState(initial = emptyList())
                     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
                     if (isLandscape) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            StorageSection(title = "냉동", items = items1, modifier = Modifier.weight(1f).fillMaxHeight())
-                            StorageSection(title = "냉장", items = items2, modifier = Modifier.weight(1f).fillMaxHeight())
-                            StorageSection(title = "실온", items = items3, modifier = Modifier.weight(1f).fillMaxHeight())
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            StorageSection(title = "냉동", items = items1.map { it.name }, modifier = Modifier.weight(1f).fillMaxHeight())
+                            StorageSection(title = "냉장", items = items2.map { it.name }, modifier = Modifier.weight(1f).fillMaxHeight())
+                            StorageSection(title = "실온", items = items3.map { it.name }, modifier = Modifier.weight(1f).fillMaxHeight())
                         }
                     } else {
-                        StorageSection(title = "냉동", items = items1, modifier = Modifier.fillMaxWidth())
-                        StorageSection(title = "냉장", items = items2, modifier = Modifier.fillMaxWidth())
-                        StorageSection(title = "실온", items = items3, modifier = Modifier.fillMaxWidth())
+                        StorageSection(title = "냉동", items = items1.map { it.name }, modifier = Modifier.fillMaxWidth())
+                        StorageSection(title = "냉장", items = items2.map { it.name }, modifier = Modifier.fillMaxWidth())
+                        StorageSection(title = "실온", items = items3.map { it.name }, modifier = Modifier.fillMaxWidth())
                     }
                 }
             }
