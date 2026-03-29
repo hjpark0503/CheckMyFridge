@@ -42,16 +42,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.checkmyfridge.db.AppDatabase
 import com.example.checkmyfridge.db.ItemEntity
-import com.example.checkmyfridge.ui.theme.black
-import com.example.checkmyfridge.ui.theme.darkGrey
-import com.example.checkmyfridge.ui.theme.red
-import com.example.checkmyfridge.ui.theme.white
+import com.example.checkmyfridge.ui.theme.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun StorageSection(
     title: String,
@@ -108,7 +103,7 @@ private fun StorageSection(
 
                     Surface(
                         shape = RoundedCornerShape(8.dp),
-                        color = MaterialTheme.colorScheme.primary,
+                        color = Common.getRestOfDayColor(item.restOfDay),
                         modifier = Modifier
                             .padding(bottom = 8.dp)
                             .combinedClickable(
@@ -180,7 +175,7 @@ class HomeScreen {
                     }
 
                     val context = LocalContext.current
-                    val dao = remember { AppDatabase.getInstance(context).itemDao() }
+                    val dao = remember { Common.getDao(context) }
                     val scope = rememberCoroutineScope()
                     val items1 by dao.getItemsByCategory("냉동").collectAsState(initial = emptyList())
                     val items2 by dao.getItemsByCategory("냉장").collectAsState(initial = emptyList())

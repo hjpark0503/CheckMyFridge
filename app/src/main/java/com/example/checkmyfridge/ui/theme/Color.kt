@@ -31,3 +31,7 @@ val white = Color(0xFFFFFFFF)
 
 //빨간색
 val red = Color(0xFFD70000)
+val lightRed = Color(0xFFC76464)
+
+//초록색
+val green = Color(0xFF69BB6E)

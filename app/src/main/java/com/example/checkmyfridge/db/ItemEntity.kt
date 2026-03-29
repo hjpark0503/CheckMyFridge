@@ -9,5 +9,6 @@ data class ItemEntity(
     val name: String,
     val addedDate: Long,
     val expirationDate: Long,
-    val category: String
+    val category: String,
+    val restOfDay: Int,
 )

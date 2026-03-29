@@ -15,6 +15,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -52,7 +55,7 @@ class ListScreen {
         @Composable
         fun Content(modifier: Modifier = Modifier) {
             val context = LocalContext.current
-            val dao = remember { AppDatabase.getInstance(context).itemDao() }
+            val dao = remember { Common.getDao(context) }
             val scope = rememberCoroutineScope()
 
             val categories = listOf("냉동", "냉장", "실온")
@@ -71,9 +74,10 @@ class ListScreen {
                         dao.insert(
                             ItemEntity(
                                 name = trimmed,
-                                addedDate = Date().time,
-                                expirationDate = Date().time + 7 * 24 * 60 * 60 * 1000L,
-                                category = currentCategory
+                                addedDate = Common.today(),
+                                expirationDate = Common.daysLater(7),
+                                category = currentCategory,
+                                restOfDay = 7
                             )
                         )
                     }
@@ -141,7 +145,6 @@ class ListScreen {
                 ) {
 
                     items(items) { item ->
-                        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                         var showDeleteDialog by remember { mutableStateOf(false) }
 
                         if (showDeleteDialog) {
@@ -174,22 +177,27 @@ class ListScreen {
                                 )
                                 .padding(vertical = 8.dp, horizontal = 8.dp)
                         ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .background(color = Common.getRestOfDayColor(item.restOfDay), shape = CircleShape)
+                                    .align(Alignment.CenterVertically))
                             Text(
                                 text = item.name,
                                 fontSize = 25.sp,
                                 color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
+                                modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                             )
 
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "추가일자 " + dateFormat.format(Date(item.addedDate)),
+                                    text = "추가일자 " + Common.formatDate(item.addedDate),
                                     fontSize = 13.sp,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.align(Alignment.End)
                                 )
                                 Text(
-                                    text = "소비기한 " + dateFormat.format(Date(item.expirationDate)),
+                                    text = "소비기한 " + Common.formatDate(item.expirationDate),
                                     fontSize = 13.sp,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.align(Alignment.End)
