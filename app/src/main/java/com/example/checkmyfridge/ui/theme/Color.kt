@@ -28,3 +28,6 @@ val deepGrey = Color(0xFF262626)
 val darkGrey = Color(0xFF707070)
 val grey = Color(0xFFB6B6B6)
 val white = Color(0xFFFFFFFF)
+
+//빨간색
+val red = Color(0xFFD70000)

@@ -14,12 +14,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.checkmyfridge.db.AppDatabase
 import com.example.checkmyfridge.db.ItemEntity
+import com.example.checkmyfridge.ui.theme.red
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -138,10 +142,36 @@ class ListScreen {
 
                     items(items) { item ->
                         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        var showDeleteDialog by remember { mutableStateOf(false) }
+
+                        if (showDeleteDialog) {
+                            AlertDialog(
+                                onDismissRequest = { showDeleteDialog = false },
+                                title = { Text("재료 삭제", fontSize = 18.sp) },
+                                text = { Text("'${item.name}'을(를) 삭제하시겠습니까?") },
+                                confirmButton = {
+                                    TextButton(onClick = {
+                                        scope.launch { dao.deleteById(item.id) }
+                                        showDeleteDialog = false
+                                    }) {
+                                        Text("삭제", color = red)
+                                    }
+                                },
+                                dismissButton = {
+                                    TextButton(onClick = { showDeleteDialog = false }) {
+                                        Text("취소")
+                                    }
+                                }
+                            )
+                        }
 
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .combinedClickable(
+                                    onClick = {},
+                                    onLongClick = { showDeleteDialog = true }
+                                )
                                 .padding(vertical = 8.dp, horizontal = 8.dp)
                         ) {
                             Text(
@@ -151,23 +181,20 @@ class ListScreen {
                                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                             )
 
-                            Column(modifier = Modifier.weight(1f)){
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = "추가일자 " + dateFormat.format(Date(item.addedDate)),
                                     fontSize = 13.sp,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.align(Alignment.End)
                                 )
-
                                 Text(
                                     text = "소비기한 " + dateFormat.format(Date(item.expirationDate)),
                                     fontSize = 13.sp,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.align(Alignment.End)
-
                                 )
                             }
-
                         }
 
                         HorizontalDivider()

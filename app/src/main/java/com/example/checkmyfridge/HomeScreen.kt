@@ -1,52 +1,62 @@
 package com.example.checkmyfridge
 
+import android.content.res.Configuration
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.delay
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import android.content.res.Configuration
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.sp
 import com.example.checkmyfridge.db.AppDatabase
+import com.example.checkmyfridge.db.ItemEntity
 import com.example.checkmyfridge.ui.theme.black
 import com.example.checkmyfridge.ui.theme.darkGrey
+import com.example.checkmyfridge.ui.theme.red
 import com.example.checkmyfridge.ui.theme.white
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun StorageSection(
     title: String,
-    items: List<String>,
+    items: List<ItemEntity>,
+    onDelete: (ItemEntity) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -69,22 +79,48 @@ private fun StorageSection(
                     .height(50.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
-                Text(
-                    text = "재료가 없어요",
-                    color = darkGrey
-                )
+                Text(text = "재료가 없어요", color = darkGrey)
             }
         } else {
             FlowRow(
                 modifier = Modifier.padding(horizontal = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items.forEach { label ->
-                    Button(
-                        onClick = {},
+                items.forEach { item ->
+                    var showDialog by remember { mutableStateOf(false) }
+
+                    if (showDialog) {
+                        AlertDialog(
+                            onDismissRequest = { showDialog = false },
+                            title = { Text("재료 삭제",  fontSize = 18.sp) },
+                            text = { Text("'${item.name}'을(를) 삭제하시겠습니까?") },
+                            confirmButton = {
+                                TextButton(onClick = {
+                                    onDelete(item)
+                                    showDialog = false
+                                }) { Text("삭제", color = red) }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { showDialog = false }) { Text("취소") }
+                            }
+                        )
+                    }
+
+                    Surface(
                         shape = RoundedCornerShape(8.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .padding(bottom = 8.dp)
+                            .combinedClickable(
+                                onClick = {},
+                                onLongClick = { showDialog = true }
+                            )
                     ) {
-                        Text(label)
+                        Text(
+                            text = item.name,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
                     }
                 }
             }
@@ -145,21 +181,23 @@ class HomeScreen {
 
                     val context = LocalContext.current
                     val dao = remember { AppDatabase.getInstance(context).itemDao() }
+                    val scope = rememberCoroutineScope()
                     val items1 by dao.getItemsByCategory("냉동").collectAsState(initial = emptyList())
                     val items2 by dao.getItemsByCategory("냉장").collectAsState(initial = emptyList())
                     val items3 by dao.getItemsByCategory("실온").collectAsState(initial = emptyList())
                     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+                    val onDelete: (ItemEntity) -> Unit = { scope.launch { dao.deleteById(it.id) } }
 
                     if (isLandscape) {
                         Row(modifier = Modifier.fillMaxWidth()) {
-                            StorageSection(title = "냉동", items = items1.map { it.name }, modifier = Modifier.weight(1f).fillMaxHeight())
-                            StorageSection(title = "냉장", items = items2.map { it.name }, modifier = Modifier.weight(1f).fillMaxHeight())
-                            StorageSection(title = "실온", items = items3.map { it.name }, modifier = Modifier.weight(1f).fillMaxHeight())
+                            StorageSection(title = "냉동", items = items1, onDelete = onDelete, modifier = Modifier.weight(1f).fillMaxHeight())
+                            StorageSection(title = "냉장", items = items2, onDelete = onDelete, modifier = Modifier.weight(1f).fillMaxHeight())
+                            StorageSection(title = "실온", items = items3, onDelete = onDelete, modifier = Modifier.weight(1f).fillMaxHeight())
                         }
                     } else {
-                        StorageSection(title = "냉동", items = items1.map { it.name }, modifier = Modifier.fillMaxWidth())
-                        StorageSection(title = "냉장", items = items2.map { it.name }, modifier = Modifier.fillMaxWidth())
-                        StorageSection(title = "실온", items = items3.map { it.name }, modifier = Modifier.fillMaxWidth())
+                        StorageSection(title = "냉동", items = items1, onDelete = onDelete, modifier = Modifier.fillMaxWidth())
+                        StorageSection(title = "냉장", items = items2, onDelete = onDelete, modifier = Modifier.fillMaxWidth())
+                        StorageSection(title = "실온", items = items3, onDelete = onDelete, modifier = Modifier.fillMaxWidth())
                     }
                 }
             }
