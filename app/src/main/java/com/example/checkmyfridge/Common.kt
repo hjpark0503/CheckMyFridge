@@ -29,7 +29,9 @@ object Common {
         AppDatabase.getInstance(context).itemDao()
 
 
-    fun getRestOfDayColor(restOfDay: Int): Color {
+    fun getRestOfDayColor(expirationDate: Long): Color {
+        val restOfDay = (expirationDate - today()) / 24 / 60 / 60 / 1000
+
         if(restOfDay < 0){
             return lightRed
         }else if(restOfDay < 3){

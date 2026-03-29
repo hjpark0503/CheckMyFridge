@@ -103,7 +103,7 @@ private fun StorageSection(
 
                     Surface(
                         shape = RoundedCornerShape(8.dp),
-                        color = Common.getRestOfDayColor(item.restOfDay),
+                        color = Common.getRestOfDayColor(item.expirationDate),
                         modifier = Modifier
                             .padding(bottom = 8.dp)
                             .combinedClickable(

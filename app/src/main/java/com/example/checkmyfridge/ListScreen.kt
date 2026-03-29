@@ -37,6 +37,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import android.content.res.Configuration
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
@@ -44,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.checkmyfridge.db.AppDatabase
 import com.example.checkmyfridge.db.ItemEntity
-import com.example.checkmyfridge.ui.theme.red
+import com.example.checkmyfridge.ui.theme.*
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -77,13 +79,31 @@ class ListScreen {
                                 addedDate = Common.today(),
                                 expirationDate = Common.daysLater(7),
                                 category = currentCategory,
-                                restOfDay = 7
                             )
                         )
                     }
                     inputText = ""
                     focusManager.clearFocus()
                 }
+            }
+
+            @Composable
+            fun textField(){
+                OutlinedTextField(
+                    value = inputText,
+                    onValueChange = { inputText = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    placeholder = { Text("재료 입력") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done,
+                        hintLocales = androidx.compose.ui.text.intl.LocaleList("ko")
+                    ),
+                    keyboardActions = KeyboardActions(onDone = { addItem() })
+                )
             }
 
             Column(
@@ -94,10 +114,13 @@ class ListScreen {
                         detectTapGestures(onTap = { focusManager.clearFocus() })
                     }
             ) {
+                val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
                 // 상단 버튼 3개
                 Row(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     categories.forEachIndexed { index, label ->
                         Button(
@@ -118,24 +141,16 @@ class ListScreen {
                             )
                         }
                     }
+                    if(isLandscape){
+                        // EditText
+                        textField()
+                    }
                 }
 
-                // EditText
-                OutlinedTextField(
-                    value = inputText,
-                    onValueChange = { inputText = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 4.dp),
-                    placeholder = { Text("재료 입력") },
-                    singleLine = true,
-                    shape = RoundedCornerShape(12.dp),
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Done,
-                        hintLocales = androidx.compose.ui.text.intl.LocaleList("ko")
-                    ),
-                    keyboardActions = KeyboardActions(onDone = { addItem() })
-                )
+                if(!isLandscape) {
+                    // EditText
+                    textField()
+                }
 
                 // 세로 리스트
                 LazyColumn(
@@ -180,7 +195,7 @@ class ListScreen {
                             Box(
                                 modifier = Modifier
                                     .size(20.dp)
-                                    .background(color = Common.getRestOfDayColor(item.restOfDay), shape = CircleShape)
+                                    .background(color = Common.getRestOfDayColor(item.expirationDate), shape = CircleShape)
                                     .align(Alignment.CenterVertically))
                             Text(
                                 text = item.name,
@@ -193,13 +208,13 @@ class ListScreen {
                                 Text(
                                     text = "추가일자 " + Common.formatDate(item.addedDate),
                                     fontSize = 13.sp,
-                                    color = MaterialTheme.colorScheme.onSurface,
+                                    color = if(themeIndex==3) grey else darkGrey,
                                     modifier = Modifier.align(Alignment.End)
                                 )
                                 Text(
                                     text = "소비기한 " + Common.formatDate(item.expirationDate),
                                     fontSize = 13.sp,
-                                    color = MaterialTheme.colorScheme.onSurface,
+                                    color = if(themeIndex==3) grey else darkGrey,
                                     modifier = Modifier.align(Alignment.End)
                                 )
                             }
