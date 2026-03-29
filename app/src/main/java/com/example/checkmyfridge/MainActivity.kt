@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -27,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.checkmyfridge.ui.theme.CheckMyFridgeTheme
 
 
-var themeIndex = 2
+var themeIndex = 1 //1 블루, 2 우드, 3 다크
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +56,11 @@ fun MainScreen(modifier: Modifier = Modifier, themeIndex: Int = 1) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         bottomBar = {
-            NavigationBar(tonalElevation = 0.dp, modifier = Modifier.height(75.dp)) {
+            NavigationBar(
+                tonalElevation = 0.dp,
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                modifier = Modifier.height(75.dp)
+            ) {
                 tabs.forEachIndexed { index, title ->
                     NavigationBarItem(
                         selected = selectedTabIndex == index,

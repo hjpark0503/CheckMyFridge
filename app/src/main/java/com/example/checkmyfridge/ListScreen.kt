@@ -184,9 +184,9 @@ class ListScreen {
                                     .align(Alignment.CenterVertically))
                             Text(
                                 text = item.name,
-                                fontSize = 25.sp,
+                                fontSize = 20.sp,
                                 color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                                modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 12.dp)
                             )
 
                             Column(modifier = Modifier.weight(1f)) {
