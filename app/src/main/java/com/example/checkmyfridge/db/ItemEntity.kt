@@ -10,4 +10,6 @@ data class ItemEntity(
     val addedDate: Long,
     val expirationDate: Long,
     val category: String,
+    val subCategory: String,
+    val count: Int,
 )

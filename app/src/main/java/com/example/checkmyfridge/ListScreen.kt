@@ -1,5 +1,6 @@
 package com.example.checkmyfridge
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -54,6 +55,7 @@ import java.util.Locale
 
 class ListScreen {
     companion object {
+        @SuppressLint("DefaultLocale")
         @Composable
         fun Content(modifier: Modifier = Modifier) {
             val context = LocalContext.current
@@ -79,6 +81,8 @@ class ListScreen {
                                 addedDate = Common.today(),
                                 expirationDate = Common.daysLater(7),
                                 category = currentCategory,
+                                subCategory = "서브",
+                                count = 1
                             )
                         )
                     }
@@ -183,40 +187,53 @@ class ListScreen {
                             )
                         }
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .combinedClickable(
-                                    onClick = {},
-                                    onLongClick = { showDeleteDialog = true }
-                                )
-                                .padding(vertical = 8.dp, horizontal = 8.dp)
-                        ) {
-                            Box(
+                        Column{
+                            Row(
                                 modifier = Modifier
-                                    .size(20.dp)
-                                    .background(color = Common.getRestOfDayColor(item.expirationDate), shape = CircleShape)
-                                    .align(Alignment.CenterVertically))
-                            Text(
-                                text = item.name,
-                                fontSize = 18.sp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 12.dp)
-                            )
+                                    .fillMaxWidth()
+                                    .combinedClickable(
+                                        onClick = {},
+                                        onLongClick = { showDeleteDialog = true }
+                                    )
+                                    .padding(vertical = 8.dp, horizontal = 8.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .background(color = Common.getRestOfDayColor(item.expirationDate), shape = CircleShape)
+                                        .align(Alignment.CenterVertically))
 
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "추가일자 " + Common.formatDate(item.addedDate),
-                                    fontSize = 11.sp,
-                                    color = if(themeIndex==3) grey else darkGrey,
-                                    modifier = Modifier.align(Alignment.End)
-                                )
-                                Text(
-                                    text = "소비기한 " + Common.formatDate(item.expirationDate),
-                                    fontSize = 11.sp,
-                                    color = if(themeIndex==3) grey else darkGrey,
-                                    modifier = Modifier.align(Alignment.End)
-                                )
+                                Column (modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 18.dp)){
+                                    Text(
+                                        text = item.name,
+                                        fontSize = 18.sp,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                    val str = String.format("%s • %s • %d개", item.category, item.subCategory, item.count)
+                                    Text(
+                                        text = str,
+                                        fontSize = 13.sp,
+                                        color = if (themeIndex == 3) grey else darkGrey,
+                                    )
+                                }
+
+
+
+
+                                Column(modifier = Modifier.weight(1f).align(Alignment.CenterVertically)) {
+                                    Text(
+                                        text = "추가 " + Common.formatDate(item.addedDate),
+                                        fontSize = 11.sp,
+                                        color = if(themeIndex==3) grey else darkGrey,
+                                        modifier = Modifier.align(Alignment.End)
+                                    )
+                                    Text(
+                                        text = "소비 " + Common.formatDate(item.expirationDate),
+                                        fontSize = 11.sp,
+                                        color = if(themeIndex==3) grey else darkGrey,
+                                        modifier = Modifier.align(Alignment.End)
+                                    )
+                                }
                             }
                         }
 
