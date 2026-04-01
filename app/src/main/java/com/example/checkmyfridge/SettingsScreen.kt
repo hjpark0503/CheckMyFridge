@@ -47,7 +47,7 @@ class SettingsScreen {
             ) {
                 Text(
                     text = "테마 설정",
-                    fontSize = 20.sp,
+                    fontSize = 17.sp,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(bottom = 15.dp)
                 )
@@ -87,16 +87,8 @@ class SettingsScreen {
                             Spacer(modifier = Modifier.size(8.dp))
                             Text(
                                 text = theme.label,
-                                fontSize = 18.sp,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                fontSize = 16.sp,
                                 color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                        if (isSelected) {
-                            Text(
-                                text = "✓",
-                                fontSize = 18.sp,
-                                color = MaterialTheme.colorScheme.primary
                             )
                         }
                     }

@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -58,12 +59,13 @@ private fun StorageSection(
         modifier = modifier
             .padding(horizontal = 10.dp, vertical = 10.dp)
             .clip(RoundedCornerShape(16.dp))
+            .border(1.dp, lightGrey, RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.secondaryContainer)
     ) {
         Text(
             text = title,
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 18.sp,
+            fontSize = 16.sp,
             modifier = Modifier.padding(15.dp)
         )
 
@@ -87,7 +89,7 @@ private fun StorageSection(
                     if (showDialog) {
                         AlertDialog(
                             onDismissRequest = { showDialog = false },
-                            title = { Text("재료 삭제",  fontSize = 18.sp) },
+                            title = { Text("재료 삭제",  fontSize = 16.sp) },
                             text = { Text("'${item.name}'을(를) 삭제하시겠습니까?") },
                             confirmButton = {
                                 TextButton(onClick = {
@@ -138,15 +140,16 @@ class HomeScreen {
 
 
                 // 콘텐츠 레이어
-                Column(modifier = Modifier.fillMaxWidth().padding(5.dp)) {
+                Column(modifier = Modifier.fillMaxWidth().padding(2.dp)) {
 
                     //냉장고 요정
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(150.dp)
+                            .height(120.dp)
                             .padding(horizontal = 10.dp, vertical = 10.dp)
                             .clip(RoundedCornerShape(16.dp))
+                            .border(1.dp, lightGrey, RoundedCornerShape(16.dp))
                             .background(white),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center

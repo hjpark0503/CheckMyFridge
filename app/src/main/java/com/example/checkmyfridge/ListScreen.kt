@@ -136,7 +136,7 @@ class ListScreen {
                         ) {
                             Text(
                                 text = label,
-                                fontSize = 16.sp,
+                                fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -165,7 +165,7 @@ class ListScreen {
                         if (showDeleteDialog) {
                             AlertDialog(
                                 onDismissRequest = { showDeleteDialog = false },
-                                title = { Text("재료 삭제", fontSize = 18.sp) },
+                                title = { Text("재료 삭제", fontSize = 16.sp) },
                                 text = { Text("'${item.name}'을(를) 삭제하시겠습니까?") },
                                 confirmButton = {
                                     TextButton(onClick = {
@@ -199,7 +199,7 @@ class ListScreen {
                                     .align(Alignment.CenterVertically))
                             Text(
                                 text = item.name,
-                                fontSize = 20.sp,
+                                fontSize = 18.sp,
                                 color = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 12.dp)
                             )
@@ -207,13 +207,13 @@ class ListScreen {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = "추가일자 " + Common.formatDate(item.addedDate),
-                                    fontSize = 13.sp,
+                                    fontSize = 11.sp,
                                     color = if(themeIndex==3) grey else darkGrey,
                                     modifier = Modifier.align(Alignment.End)
                                 )
                                 Text(
                                     text = "소비기한 " + Common.formatDate(item.expirationDate),
-                                    fontSize = 13.sp,
+                                    fontSize = 11.sp,
                                     color = if(themeIndex==3) grey else darkGrey,
                                     modifier = Modifier.align(Alignment.End)
                                 )
