@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -16,6 +17,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -25,22 +27,37 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.checkmyfridge.ui.theme.CheckMyFridgeTheme
 
 
 var themeIndex = 1 //1 블루, 2 우드, 3 다크
 
+
 class MainActivity : ComponentActivity() {
+    private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        val splashScreen = installSplashScreen()
+        splashScreen.setKeepOnScreenCondition {
+            !viewModel.showSplash.value
+        }
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val showSplash by viewModel.showSplash.collectAsState()
             var themeIndex by rememberSaveable { mutableIntStateOf(1) }
             CheckMyFridgeTheme(themeIndex = themeIndex) {
-                MainScreen(
-                    themeIndex = themeIndex,
-                    onThemeChange = { themeIndex = it }
-                )
+                if (showSplash) {
+                    SplashScreen(onFinished = { viewModel.onSplashFinished() })
+                } else {
+                    MainScreen(
+                        themeIndex = themeIndex,
+                        onThemeChange = { themeIndex = it }
+                    )
+                }
             }
         }
     }

@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.CheckMyFridge" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.CheckMyFridge" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.CheckMyFridge.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/fridge_happy</item>
+        <item name="postSplashScreenTheme">@style/Theme.CheckMyFridge</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
 </resources>
