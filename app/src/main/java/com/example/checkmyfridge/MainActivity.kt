@@ -48,6 +48,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val showSplash by viewModel.showSplash.collectAsState()
+            val seasonalFoods by viewModel.seasonalFoods.collectAsState()
+            val categories by viewModel.categories.collectAsState()
             var themeIndex by rememberSaveable { mutableIntStateOf(1) }
             CheckMyFridgeTheme(themeIndex = themeIndex) {
                 if (showSplash) {
@@ -55,7 +57,9 @@ class MainActivity : ComponentActivity() {
                 } else {
                     MainScreen(
                         themeIndex = themeIndex,
-                        onThemeChange = { themeIndex = it }
+                        onThemeChange = { themeIndex = it },
+                        seasonalFoods = seasonalFoods,
+                        categories = categories
                     )
                 }
             }
@@ -67,7 +71,9 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(
     modifier: Modifier = Modifier,
     themeIndex: Int = 1,
-    onThemeChange: (Int) -> Unit = {}
+    onThemeChange: (Int) -> Unit = {},
+    seasonalFoods: Map<String, List<String>> = emptyMap(),
+    categories: Map<String, List<String>> = emptyMap()
 ) {
     val tabs = listOf("홈", "목록", "설정")
     val tabIcons = listOf(R.drawable.home, R.drawable.paper, R.drawable.settings)
@@ -105,7 +111,10 @@ fun MainScreen(
     ) { innerPadding ->
         when (selectedTabIndex) {
             0 -> HomeScreen.Content(modifier = Modifier.padding(innerPadding))
-            1 -> ListScreen.Content(modifier = Modifier.padding(innerPadding))
+            1 -> ListScreen.Content(
+                modifier = Modifier.padding(innerPadding),
+                categories = categories
+            )
             else -> SettingsScreen.Content(
                 modifier = Modifier.padding(innerPadding),
                 themeIndex = themeIndex,

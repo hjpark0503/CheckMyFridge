@@ -1,24 +1,25 @@
 package com.example.checkmyfridge
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -38,38 +39,48 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import android.content.res.Configuration
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.checkmyfridge.db.AppDatabase
 import com.example.checkmyfridge.db.ItemEntity
 import com.example.checkmyfridge.ui.theme.*
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class ListScreen {
     companion object {
         @SuppressLint("DefaultLocale")
         @Composable
-        fun Content(modifier: Modifier = Modifier) {
+        fun Content(
+            modifier: Modifier = Modifier,
+            categories: Map<String, List<String>> = emptyMap()
+        ) {
             val context = LocalContext.current
             val dao = remember { Common.getDao(context) }
             val scope = rememberCoroutineScope()
 
-            val categories = listOf("냉동", "냉장", "실온")
+            val storageCategories = listOf("냉동", "냉장", "실온")
             var selectedIndex by remember { mutableIntStateOf(0) }
-            val currentCategory = categories[selectedIndex]
+            val currentCategory = storageCategories[selectedIndex]
 
             val items by dao.getItemsByCategory(currentCategory).collectAsState(initial = emptyList())
 
             var inputText by remember { mutableStateOf("") }
             val focusManager = LocalFocusManager.current
+
+            // name을 보고 카테고리.json에서 서브카테고리 자동 탐색
+            fun detectSubCategory(name: String): String {
+                val trimmed = name.trim()
+                if (trimmed.isEmpty()) return "기타"
+                for ((categoryName, foodList) in categories) {
+                    if (foodList.any { it.contains(trimmed) || trimmed.contains(it) }) {
+                        return categoryName
+                    }
+                }
+                return "기타"
+            }
 
             fun addItem() {
                 val trimmed = inputText.trim()
@@ -81,7 +92,7 @@ class ListScreen {
                                 addedDate = Common.today(),
                                 expirationDate = Common.daysLater(7),
                                 category = currentCategory,
-                                subCategory = "서브",
+                                subCategory = detectSubCategory(trimmed),
                                 count = 1
                             )
                         )
@@ -92,7 +103,7 @@ class ListScreen {
             }
 
             @Composable
-            fun textField(){
+            fun textField() {
                 OutlinedTextField(
                     value = inputText,
                     onValueChange = { inputText = it },
@@ -126,7 +137,7 @@ class ListScreen {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    categories.forEachIndexed { index, label ->
+                    storageCategories.forEachIndexed { index, label ->
                         Button(
                             onClick = { selectedIndex = index },
                             modifier = Modifier.width(90.dp),
